@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
@@ -25,8 +26,6 @@ public class MainActivity extends Activity {
     private CameraManager mCameraManager;
     private boolean mIsOn = true;
     private SocketClient mThread;
-    private Button mButton;
-    private Button mSetting;
     private String mIP;
     private int mPort = 8888;
 
@@ -35,42 +34,53 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mButton = (Button) findViewById(R.id.button_capture);
-        mButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // get an image from the camera
-                        if (mIsOn) {
-                            if (mIP == null) {
-                                mThread = new SocketClient(mPreview);
-                            }
-                            else {
-                                mThread = new SocketClient(mPreview, mIP, mPort);
-                            }
-
-                            mIsOn = false;
-                            mButton.setText(R.string.stop);
-                        }
-                        else {
-                            closeSocketClient();
-                            reset();
-                        }
-                    }
-                }
-        );
-        mSetting = (Button) findViewById(R.id.button_setting);
-        mSetting.setOnClickListener(new View.OnClickListener() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,Server_setting.class));
+            public void run() {
+
+                if (mIsOn) {
+                    if (mIP == null) {
+                        mThread = new SocketClient(mPreview);
+                    } else {
+                        while (mIP == "192.168.31.210"){
+                            mThread = new SocketClient(mPreview, mIP, mPort);}
+                        mThread.close();
+
+                        while (mIP == "192.168.31.211"){
+                            mThread = new SocketClient(mPreview, mIP, mPort);
+                            mThread.start();
+                        }
+
+                    }
+
+                    mIsOn = false;
+
+                } else {
+                    closeSocketClient();
+                    reset();
+                }
+                mThread.close();
+
             }
-        });
+        }, 10000);
+
+
+        // get an image from the camera
+
+
         mCameraManager = new CameraManager(this);
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCameraManager.getCamera());
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
+    }
+
+    public void tt(String st) {
+
+        Toast.makeText(MainActivity.this, st, Toast.LENGTH_LONG).show();
+
+
     }
 
 //    @Override
@@ -131,7 +141,6 @@ public class MainActivity extends Activity {
     }
 
     private void reset() {
-        mButton.setText(R.string.start);
         mIsOn = true;
     }
 
