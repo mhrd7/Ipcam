@@ -17,7 +17,7 @@ public class SocketClient extends Thread {
     private Socket mSocket;
     private CameraPreview mCameraPreview;
     private static final String TAG = "socket";
-    private String mIP = "192.168.1.66";
+    private String mIP;
     private int mPort = 8888;
 
     public SocketClient(CameraPreview preview, String ip, int port) {

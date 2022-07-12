@@ -26,7 +26,8 @@ public class MainActivity extends Activity {
     private CameraManager mCameraManager;
     private boolean mIsOn = true;
     private SocketClient mThread;
-    private String mIP;
+    private SocketClient mmThread;
+    private String mIP= "192.168.31.210";
     private int mPort = 8888;
 
     @Override
@@ -42,29 +43,50 @@ public class MainActivity extends Activity {
                 if (mIsOn) {
                     if (mIP == null) {
                         mThread = new SocketClient(mPreview);
-                    } else {
-                        while (mIP == "192.168.31.210"){
-                            mThread = new SocketClient(mPreview, mIP, mPort);}
-                        mThread.close();
-
-                        while (mIP == "192.168.31.211"){
-                            mThread = new SocketClient(mPreview, mIP, mPort);
-                            mThread.start();
-                        }
+                    }
+                    else {
+                        mThread = new SocketClient(mPreview, mIP, mPort);
 
                     }
 
                     mIsOn = false;
 
-                } else {
+                }
+                else {
                     closeSocketClient();
                     reset();
                 }
-                mThread.close();
-
             }
         }, 10000);
 
+        mIsOn = true;
+        mIP = "192.168.31.211";
+
+        Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
+            public void run() {
+                closeSocketClient();
+                reset();
+
+                if (mIsOn) {
+                    if (mIP == null) {
+                        mmThread = new SocketClient(mPreview);
+                        mmThread.close();
+                    }
+                    else {
+                        mmThread = new SocketClient(mPreview, mIP, mPort);
+
+                    }
+
+                    mIsOn = false;
+
+                }
+                else {
+                    closeSocketClient();
+                    reset();
+                }
+            }
+        }, 10000);
 
         // get an image from the camera
 
