@@ -43,6 +43,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         Parameters params = mCamera.getParameters();
         List<Size> sizes = params.getSupportedPreviewSizes();
+
         for (Size s : sizes) {
             Log.i(TAG, "preview size = " + s.width + ", " + s.height);
         }
